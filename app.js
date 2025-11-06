@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Send, Users, Building, CheckCircle, XCircle, Settings, Edit } from 'lucide-react';
+const { useState, useEffect } = React;
+const { Plus, Trash2, Send, Users, Building, CheckCircle, XCircle, Settings, Edit } = lucide;
 
-export default function DoorAccessSystem() {
+function DoorAccessSystem() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
@@ -29,9 +29,10 @@ export default function DoorAccessSystem() {
 
   const checkAuth = async () => {
     try {
-      const session = await window.storage.get('session');
+      const storage = window.localStorage;
+      const session = storage.getItem('session');
       if (session) {
-        const user = JSON.parse(session.value);
+        const user = JSON.parse(session);
         if (user.exp > Date.now()) {
           setCurrentUser(user);
           setIsLoggedIn(true);
@@ -56,7 +57,7 @@ export default function DoorAccessSystem() {
     
     if (loginForm.username === 'fgunarslan73@gmail.com' && hashedPass === masterHash) {
       const user = { username: loginForm.username, role: 'admin', exp: Date.now() + 86400000 };
-      await window.storage.set('session', JSON.stringify(user));
+      window.localStorage.setItem('session', JSON.stringify(user));
       setCurrentUser(user);
       setIsLoggedIn(true);
       loadData();
@@ -64,15 +65,16 @@ export default function DoorAccessSystem() {
     }
     
     try {
-      const res = await window.storage.get('residents');
+      const storage = window.localStorage;
+      const res = storage.getItem('residents');
       if (res) {
-        const allResidents = JSON.parse(res.value);
+        const allResidents = JSON.parse(res);
         const resident = allResidents.find(r => r.hasAccess && r.accessUsername === loginForm.username);
         if (resident) {
           const residentHash = await hashPassword(resident.accessPassword);
           if (hashedPass === residentHash) {
             const user = { username: loginForm.username, role: resident.accessRole, exp: Date.now() + 86400000 };
-            await window.storage.set('session', JSON.stringify(user));
+            storage.setItem('session', JSON.stringify(user));
             setCurrentUser(user);
             setIsLoggedIn(true);
             loadData();
@@ -86,33 +88,33 @@ export default function DoorAccessSystem() {
   };
 
   const handleLogout = async () => {
-    try { await window.storage.delete('session'); } catch (e) {}
+    try { window.localStorage.removeItem('session'); } catch (e) {}
     setIsLoggedIn(false);
     setCurrentUser(null);
   };
 
   const loadData = async () => {
     try {
-      const res = await window.storage.get('residents');
-      if (res) setResidents(JSON.parse(res.value));
+      const res = window.localStorage.getItem('residents');
+      if (res) setResidents(JSON.parse(res));
     } catch (e) {}
     try {
-      const del = await window.storage.get('deleted-residents');
-      if (del) setDeletedResidents(JSON.parse(del.value));
+      const del = window.localStorage.getItem('deleted-residents');
+      if (del) setDeletedResidents(JSON.parse(del));
     } catch (e) {}
     try {
-      const api = await window.storage.get('api-settings');
-      if (api) setApiSettings(JSON.parse(api.value));
+      const api = window.localStorage.getItem('api-settings');
+      if (api) setApiSettings(JSON.parse(api));
     } catch (e) {}
   };
 
   const saveResidents = async (data) => {
-    await window.storage.set('residents', JSON.stringify(data));
+    window.localStorage.setItem('residents', JSON.stringify(data));
     setResidents(data);
   };
 
   const saveDeletedResidents = async (data) => {
-    await window.storage.set('deleted-residents', JSON.stringify(data));
+    window.localStorage.setItem('deleted-residents', JSON.stringify(data));
     setDeletedResidents(data);
   };
 
@@ -317,69 +319,19 @@ export default function DoorAccessSystem() {
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Kullanıcı Adı</label>
-                <input 
-                  type="text" 
-                  placeholder="Mutlucell kullanıcı adınız" 
-                  value={apiSettings.username} 
-                  onChange={(e) => setApiSettings({...apiSettings, username: e.target.value})} 
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" 
-                />
+                <label className="block text-sm font-medium mb-2">Kullanıcı Adı</label>
+                <input type="text" placeholder="Mutlucell kullanıcı adınız" value={apiSettings.username} onChange={(e) => setApiSettings({...apiSettings, username: e.target.value})} className="w-full px-4 py-2 border rounded-lg" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Parola / API Key</label>
-                <input 
-                  type="password" 
-                  placeholder="Parolanız veya API Key" 
-                  value={apiSettings.password} 
-                  onChange={(e) => setApiSettings({...apiSettings, password: e.target.value})} 
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" 
-                />
+                <label className="block text-sm font-medium mb-2">Parola / API Key</label>
+                <input type="password" placeholder="Parolanız" value={apiSettings.password} onChange={(e) => setApiSettings({...apiSettings, password: e.target.value})} className="w-full px-4 py-2 border rounded-lg" />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Originator (Gönderici Adı)</label>
-                <input 
-                  type="text" 
-                  placeholder="MUTLUCELL" 
-                  value={apiSettings.originator} 
-                  onChange={(e) => setApiSettings({...apiSettings, originator: e.target.value})} 
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" 
-                />
-                <p className="text-sm text-gray-500 mt-1">SMS'lerde görünecek gönderici adı</p>
+                <label className="block text-sm font-medium mb-2">Originator</label>
+                <input type="text" placeholder="MUTLUCELL" value={apiSettings.originator} onChange={(e) => setApiSettings({...apiSettings, originator: e.target.value})} className="w-full px-4 py-2 border rounded-lg" />
               </div>
             </div>
-            <div className="flex justify-between items-center mt-6">
-              <div className="text-sm text-gray-600">
-                {apiSettings.username && apiSettings.password ? (
-                  <span className="flex items-center gap-2 text-green-600">
-                    <CheckCircle size={18} />
-                    <span>API yapılandırıldı - Gerçek SMS gönderimi aktif</span>
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2 text-yellow-600">
-                    <XCircle size={18} />
-                    <span>API yapılandırılmadı - Test modunda çalışıyor</span>
-                  </span>
-                )}
-              </div>
-              <button 
-                onClick={() => { 
-                  window.storage.set('api-settings', JSON.stringify(apiSettings)); 
-                  showNotif('API ayarları kaydedildi'); 
-                }} 
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md"
-              >
-                Kaydet
-              </button>
-            </div>
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-semibold text-gray-800 mb-2">📱 SMS Bilgileri</h4>
-              <div className="text-sm text-gray-700 space-y-1">
-                <p><strong>Hedef Numara:</strong> +905307059048</p>
-                <p><strong>API Endpoint:</strong> https://smsgw.mutlucell.com.tr/smsgw-ws/sndblkex</p>
-                <p><strong>Format:</strong> "ekle 5XXXXXXXXX" / "sil 5XXXXXXXXX"</p>
-              </div>
-            </div>
+            <button onClick={() => { window.localStorage.setItem('api-settings', JSON.stringify(apiSettings)); showNotif('Kaydedildi'); }} className="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-lg">Kaydet</button>
           </div>
         )}
 
@@ -508,3 +460,6 @@ export default function DoorAccessSystem() {
     </div>
   );
 }
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<DoorAccessSystem />);
