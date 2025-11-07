@@ -1,0 +1,156 @@
+/* === App.css (rev) ===
+   Reusable UI primitives for SweetLife (Tailwind + @apply)
+   - Place in: src/App.css
+   - Ensure: import "./App.css" in App.js
+*/
+
+/* PAGE + CONTAINER
+   ---------------------------------------------------------------- */
+@layer components {
+  .page-wrap {
+    @apply min-h-screen bg-slate-50 text-slate-800;
+  }
+  .container-xl {
+    @apply mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* TOPBAR / HEADER
+   ---------------------------------------------------------------- */
+@layer components {
+  .topbar {
+    @apply flex items-center justify-between gap-4 py-4;
+  }
+  .topbar-title {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  .topbar-sub {
+    @apply text-sm text-slate-500;
+  }
+}
+
+/* CARD
+   ---------------------------------------------------------------- */
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl shadow p-4 sm:p-6;
+  }
+  .card-body {
+    @apply flex flex-col gap-4;
+  }
+  .card-section {
+    @apply border-t border-slate-200 pt-4 mt-2;
+  }
+}
+
+/* FORMS
+   ---------------------------------------------------------------- */
+@layer components {
+  .label {
+    @apply block text-sm font-medium text-slate-700 mb-1;
+  }
+  .input {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2
+           text-slate-800 placeholder:text-slate-400
+           focus:outline-none focus:ring-2 focus:ring-indigo-500;
+  }
+  .select {
+    @apply input appearance-none pr-8;
+  }
+  .textarea {
+    @apply input min-h-[120px];
+  }
+  .field-row {
+    @apply flex flex-col sm:flex-row gap-4;
+  }
+}
+
+/* BUTTONS
+   ---------------------------------------------------------------- */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2
+           rounded-lg px-4 py-2 font-medium transition
+           disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary   { @apply btn bg-indigo-600 text-white hover:bg-indigo-500; }
+  .btn-success   { @apply btn bg-emerald-600 text-white hover:bg-emerald-500; }
+  .btn-danger    { @apply btn bg-rose-600 text-white hover:bg-rose-500; }
+  .btn-gray      { @apply btn bg-slate-200 text-slate-700 hover:bg-slate-300; }
+  .btn-soft      { @apply btn bg-slate-100 text-slate-700 hover:bg-slate-200; }
+  .btn-outline   { @apply btn border border-slate-300 text-slate-700 hover:bg-slate-100; }
+  .btn-icon      { @apply btn w-9 h-9 p-0; }
+}
+
+/* SEARCH
+   ---------------------------------------------------------------- */
+@layer components {
+  .search-input {
+    @apply input;
+  }
+}
+
+/* TABLE
+   ---------------------------------------------------------------- */
+@layer components {
+  .table {
+    @apply w-full border-collapse;
+  }
+  .th {
+    @apply bg-slate-100 text-slate-700 text-xs sm:text-sm font-semibold py-2 px-3;
+  }
+  .td {
+    @apply border-t border-slate-200 py-2 px-3 text-sm text-slate-700 align-middle;
+  }
+  .tr:hover {
+    @apply bg-slate-50;
+  }
+  .table-actions {
+    @apply flex items-center gap-2;
+  }
+}
+
+/* BADGES / TAGS / CHIPS
+   ---------------------------------------------------------------- */
+@layer components {
+  .badge       { @apply inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium; }
+  .badge-green { @apply badge bg-emerald-600 text-white; }
+  .badge-blue  { @apply badge bg-indigo-600 text-white; }
+  .badge-gray  { @apply badge bg-slate-200 text-slate-700; }
+  .tag         { @apply inline-flex items-center rounded-full border border-slate-300 px-2 py-0.5 text-xs text-slate-600; }
+}
+
+/* TABS
+   ---------------------------------------------------------------- */
+@layer components {
+  .tabs       { @apply flex flex-wrap items-center gap-2; }
+  .tab        { @apply rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100; }
+  .tab-active { @apply bg-indigo-600 text-white hover:bg-indigo-500; }
+}
+
+/* MODAL
+   ---------------------------------------------------------------- */
+@layer components {
+  .modal-backdrop { @apply fixed inset-0 bg-slate-900/40 backdrop-blur-sm; }
+  .modal-card     { @apply card w-[min(640px,90vw)] mx-auto; }
+}
+
+/* EMPTY STATE / PLACEHOLDERS
+   ---------------------------------------------------------------- */
+@layer components {
+  .empty {
+    @apply flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed
+           border-slate-300 bg-white py-12 text-center text-slate-500;
+  }
+  .skeleton {
+    @apply animate-pulse rounded-md bg-slate-200;
+  }
+}
+
+/* UTILITIES (small helpers)
+   ---------------------------------------------------------------- */
+@layer utilities {
+  .centered    { @apply flex items-center justify-center; }
+  .grid-auto   { @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4; }
+  .divider     { @apply border-t border-slate-200 my-4; }
+}
